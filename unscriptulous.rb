@@ -16,16 +16,12 @@ module Rack
     end
 
     def insert_js(response_line)
-      if @headers['Content-Length']
-        @headers['Content-Length'] = (@headers['Content-Length'].to_i + inline_code.length).to_s
-      end
+      add_to_content_length(inline_code.length)
       response_line.sub!(/<\/head>/, "#{inline_code}\n</head>")
     end
 
     def insert_html(response_line)
-      if @headers['Content-Length']
-        @headers['Content-Length'] = (@headers['Content-Length'].to_i + no_javascript_warning.length).to_s
-      end
+      add_to_content_length(no_javascript_warning.length)
       response_line.sub!(body_regex, '\1'+"\n#{no_javascript_warning}")
     end
 
@@ -39,9 +35,14 @@ module Rack
       END
     end
 
-
     def body_regex
       /(<\s*body[^>]*>)/
+    end
+
+    def add_to_content_length(number)
+      if @headers['Content-Length']
+        @headers['Content-Length'] = (@headers['Content-Length'].to_i + number.to_i).to_s
+      end
     end
   end
 end
