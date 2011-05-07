@@ -1,5 +1,5 @@
 module Rack
-  class Unscriptulous
+  class Unscripted
     def initialize(app)
       @app = app
     end

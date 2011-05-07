@@ -1,9 +1,9 @@
 require 'rubygems'
 require 'rack/test'
 require 'test/unit'
-require File.expand_path(File.dirname(__FILE__) + '/../unscriptulous')
+require File.expand_path(File.dirname(__FILE__) + '/../rack/unscripted')
 
-class UnscriptulousTest < Test::Unit::TestCase
+class UnscriptedTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
@@ -14,7 +14,7 @@ class UnscriptulousTest < Test::Unit::TestCase
         Rack::Response.new(test_page_html)
       ]
     end
-    Rack::Unscriptulous.new(@other_app)
+    Rack::Unscripted.new(@other_app)
   end
 
   def test_inline_js_added
