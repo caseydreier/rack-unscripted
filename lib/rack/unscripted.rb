@@ -37,7 +37,7 @@ module Rack
 
     def inline_code
       <<-END
-<script type="text/javascript">document.write('<style>.rack-unscripted-no-javascript-warning { display:none }</style>');</script>
+<script type="text/javascript">document.write('<style>#rack-unscripted-no-javascript-warning{display:none;}</style>');</script>
       END
     end
 
