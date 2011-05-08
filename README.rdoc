@@ -1,0 +1,76 @@
+= Rack::Unscripted
+
+This is a small piece of Rack middleware that will append a message to your HTML warning a user that they need to enable JavaScript in order to properly view your site.
+
+The Rack middleware will append a <tt><div></tt> right after the opening body tag, but hide it via a CSS directive that is written by JavaScript in the <tt><head></tt> section. This prevents any flashing that can happen by merely hiding the element via JS directly.  We don't use the <tt><noscript></tt> tag since it has spotty support and doesn't work when a user is using a browser plugin to whitelist JS on certain sites.
+
+The div that is created can be referenced in CSS the the id, <tt>rack-unscripted-no-javascript-warning</tt>, so you can style this warning (when it does get displayed) to your heart's content.
+
+== Example
+
+Original HTML:
+
+  <html>
+    <head>
+      <title>The Bucket of Truth</title>
+    </head>
+    <body>
+      ...stuff!...
+    </body>
+  </html>
+
+HTML with Rack::Unscripted enabled:
+
+  <html>
+    <head>
+      <title>The Bucket of Truth</title>
+      <script type="text/javascript">
+        document.write('<style>.rack-unscripted-no-javascript-warning { display:none }</style>');
+      </script>
+    </head>
+    <body>
+      <div id='rack-unscripted-no-javascript-warning'>
+        Warning, this site requires JavaScript to function properly. Please enable it.
+      </div>
+      ...stuff!...
+    </body>
+  </html>
+
+== Installation
+
+Make sure to install this gem:
+
+  gem install rack-unscripted
+
+or, add the following to your Gemfile:
+
+  gem 'rack-unscripted'
+
+Then you need to configure your middleware stack to use this library.
+
+== Usage
+
+  use Rack::Unscripted
+
+or
+
+  use Rack::Unscripted, "Custom warning message to users without JavaScript enabled."
+
+== Example Configuration
+
+=== Rails 3.x
+
+In config/initializers/rack_unscripted.rb
+
+  MyApplicationName::Application.config.middleware use "Rack::Unscripted"
+
+=== Rails 2.3.x
+
+In config/environment.rb
+
+  config.middleware.use "Rack::Unscripted"
+
+=== Sinatra
+
+  require 'rack/unscripted'
+  use Rack::Unscripted
