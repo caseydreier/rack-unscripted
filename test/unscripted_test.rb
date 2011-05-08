@@ -3,12 +3,13 @@ require 'rack/test'
 require 'test/unit'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/rack/unscripted')
 
-class UnscriptedTest < Test::Unit::TestCase
+class Rack::UnscriptedTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
     @other_app ||= other_app
-    Rack::Unscripted.new(@other_app)
+    @custom_warning_message ||= nil
+    Rack::Unscripted.new(@other_app, @custom_warning_message)
   end
 
   def test_inline_js_added
@@ -16,9 +17,15 @@ class UnscriptedTest < Test::Unit::TestCase
     assert last_response.body.include?(app.send(:inline_code) + '</head>')
   end
 
-  def test_inline_html_added
+  def test_default_warning_message_added_to_response_body
     get '/'
     assert last_response.body.include?("<body class=\"such-and-such\">" + app.send(:no_javascript_warning))
+  end
+
+  def test_custom_message_added_to_response_body
+    @custom_warning_message = "¡Se necissita activar JavaScript!"
+    get '/'
+    assert last_response.body.include?(@custom_warning_message)
   end
 
   def test_content_length_is_increased

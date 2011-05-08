@@ -9,7 +9,10 @@ Gem::Specification.new do |s|
   s.email       = ["casey.dreier@gmail.com"]
   s.homepage    = ""
   s.summary     = %q{Rack middleware to add a textual warning to your site for users who have Javascript disabled.}
-  # s.description = %q{TODO: Write a gem description}
+  s.description = %q{Many sites these days absolutely require a user to have Javascript enabled in order to function properly. You may have one yourself. Users that either have JS disabled or only allow trusted sites to execute JS should be given a textual warning that their user experience may be hampered.
+
+This Rack middleware will append a div with a customizable message to the HTTP response body, right after the opening <body> tag. This warning message is then hidden via a CSS command that is written by Javascript.
+}
 
   s.rubyforge_project = "rack-unscripted"
 

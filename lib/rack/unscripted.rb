@@ -1,6 +1,7 @@
 module Rack
   class Unscripted
-    def initialize(app)
+    def initialize(app, warning_message = nil)
+      self.warning_message = warning_message if warning_message
       @app = app
     end
 
@@ -17,6 +18,8 @@ module Rack
 
   private
 
+    attr_writer :warning_message
+
     def insert_js(response_line)
       add_to_content_length(inline_code.length)
       response_line.sub!(head_regex, inline_code + '\1')
@@ -29,7 +32,7 @@ module Rack
     end
 
     def no_javascript_warning
-      "<div class='rack-unscripted-no-javascript-warning'>Warning, this site requires javascript to function properly. Please enable it.</div>"
+      "<div id='rack-unscripted-no-javascript-warning'>#{warning_message}</div>"
     end
 
     def inline_code
@@ -64,6 +67,11 @@ module Rack
     # Returns +true+ if the HTTP response code is such that we should append this warning message.
     def valid_status?(response_code)
       [200, 404].include? response_code.to_i
+    end
+
+    # Attribute reader for the warning message.  Sets a default value.
+    def warning_message
+      @warning_message ||= 'Warning, this site requires javascript to function properly. Please enable it.'
     end
 
   end
