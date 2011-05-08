@@ -6,7 +6,7 @@ module Rack
 
     def call(env)
       @status, @headers, @response = @app.call(env)
-      if @headers["Content-Type"].respond_to?(:include?) && @headers["Content-Type"].include?("text/html")
+      if valid_content_type?(@headers['Content-Type']) && valid_status?(@status)
         @response.each do |response_line|
           insert_js(response_line)   if response_line =~ head_regex
           insert_html(response_line) if response_line =~ body_regex
@@ -29,27 +29,42 @@ module Rack
     end
 
     def no_javascript_warning
-      "<div class='unscriptulous-no-javascript-warning'>Warning, this site requires javascript to function properly. Please enable it.</div>"
+      "<div class='rack-unscripted-no-javascript-warning'>Warning, this site requires javascript to function properly. Please enable it.</div>"
     end
 
     def inline_code
       <<-END
-<script type="text/javascript">document.write('<style>.unscriptulous-no-javascript-warning { display:none }</style>');</script>
+<script type="text/javascript">document.write('<style>.rack-unscripted-no-javascript-warning { display:none }</style>');</script>
       END
     end
 
+    # Regular Expression to find the opening body tag.
     def body_regex
       /(<\s*body[^>]*>)/i
     end
 
+    # Regular expression to find the closing </head> tag in a document.
     def head_regex
       /(<\s*\/head[^>]*>)/i
     end
 
+    # Appends the given number to the current content length in the headers.
     def add_to_content_length(number)
       if @headers['Content-Length']
         @headers['Content-Length'] = (@headers['Content-Length'].to_i + number.to_i).to_s
       end
     end
+
+    # Returns +true+ if the content type is text/html. No need to add this message
+    # to any other types of content.
+    def valid_content_type?(content_type)
+      content_type.respond_to?(:include?) && content_type.include?("text/html")
+    end
+
+    # Returns +true+ if the HTTP response code is such that we should append this warning message.
+    def valid_status?(response_code)
+      [200, 404].include? response_code.to_i
+    end
+
   end
 end
