@@ -25,7 +25,7 @@ HTML with Rack::Unscripted enabled:
     <head>
       <title>The Bucket of Truth</title>
       <script type="text/javascript">
-        document.write('<style>.rack-unscripted-no-javascript-warning { display:none }</style>');
+        document.write('<style>#rack-unscripted-no-javascript-warning { display:none }</style>');
       </script>
     </head>
     <body>
